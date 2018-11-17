@@ -9,8 +9,10 @@ class Search extends React.Component {
     this.state = {
         point: ""
     }
-      };
-            getGoogleMaps() {
+};
+
+
+getGoogleMaps() {
     // If we haven't already defined the promise, define it
     if (!this.googleMapsPromise) {
       this.googleMapsPromise = new Promise((resolve) => {
@@ -45,7 +47,6 @@ class Search extends React.Component {
   componentDidMount() {
     // Once the Google Maps API has finished loading, initialize the map
     var autocomplete;
-    var place;
 
     this.getGoogleMaps().then((google) => {
        var input = document.getElementById('autocomplete');
@@ -53,14 +54,17 @@ class Search extends React.Component {
         autocomplete.addListener('place_changed', getLocation);
     });
 
-   function getLocation() {
+  }
+
+ getLocation() {
      place = autocomplete.getPlace();
         console.log("loc", place);
     };
 
-    this.setState({point: location});
-  }
-
+  componentDidUpdate() {
+    // I'd like my variable to be accessible here
+    console.log("update", this.place);
+}
   render() {
     var barStyle = {
         width: '1000px',
