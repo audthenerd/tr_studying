@@ -7,7 +7,8 @@ class Search extends React.Component {
     super(props)
 
     this.state = {
-        point: ""
+        lat: "",
+        lon: ""
     }
 };
 
@@ -54,17 +55,66 @@ getGoogleMaps() {
         autocomplete.addListener('place_changed', getLocation);
     });
 
-  }
-
- getLocation() {
+    function getLocation() {
      place = autocomplete.getPlace();
         console.log("loc", place);
     };
 
-  componentDidUpdate() {
-    // I'd like my variable to be accessible here
-    console.log("update", this.place);
+    function ipLookUp () {
+
+    var url = 'http://ip-api.com/json';
+        fetch(url)
+          .then((response) => response.json())
+          .then((responseJson) => {
+            console.log(responseJson);
+            this.setState({
+              lat: responseJson.lat,
+              lon: responseJson.lon
+            });
+          })
+          .catch((error) => {
+           //console.error(error);
+            });
+    };
+
+function getAddress (latitude, longitude) {
+  fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng=' +latitude + ',' + longitude + '&key=' + 'AIzaSyACySFLlLmNi76Xy9u-nD_LtiVJLUnkuN0')
+  .then(
+    function success (response) {
+      console.log('User\'s Address Data is ', response)
+    },
+    function fail (status) {
+      console.log('Request failed.  Returned status of',
+                  status)
+    }
+   )
+};
+
+if ("geolocation" in navigator) {
+  // check if geolocation is supported/enabled on current browser
+    navigator.geolocation.getCurrentPosition(
+        function success(position) {
+     // for when getting location is a success
+         console.log('latitude', position.coords.latitude, 'longitude', position.coords.longitude);
+
+         getAddress(position.coords.latitude, position.coords.longitude)
+   },
+
+        function error(error_message) {
+    // for when getting location results in an error
+            console.error('An error has occured while retrieving location', error_message)
+            ipLookUp();
+        });
+} else {
+  // geolocation is not supported
+  // get your location some other way
+  console.log('geolocation is not enabled on this browser')
+  ipLookUp()
+};
 }
+
+
+
   render() {
     var barStyle = {
         width: '1000px',

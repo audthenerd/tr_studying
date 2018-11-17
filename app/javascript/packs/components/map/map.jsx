@@ -5,8 +5,11 @@ import styles from './style.scss';
 class Main extends React.Component {
   constructor(props) {
     super(props)
-    query: ""
 
+    this.state ={
+        lat: 1.3521,
+        lng: 103.8198
+    }
     this.changeHandler = this.changeHandler.bind(this);
     this.clickHandler = this.clickHandler.bind(this);
       };
@@ -55,18 +58,25 @@ class Main extends React.Component {
 
 componentDidMount() {
     // Once the Google Maps API has finished loading, initialize the map
+    var reactState = this;
     var autocomplete;
     var service;
     var infowindow;
-    var place;
     var map;
 
 this.getGoogleMaps().then((google) => {
 
+    var singapore = {lat: reactState.state.lat , lng: reactState.state.lng};
+    map = new google.maps.Map(document.getElementById('map'), {
+          center: singapore,
+          zoom: 15
+        });
 
-    function getLocation() {
-        place = autocomplete.getPlace();
-     };
+    var marker = new google.maps.Marker({
+          position: singapore,
+          map: map,
+          title: 'Mari Kita'
+    });
 
         var defaultBounds = new google.maps.LatLngBounds(
           new google.maps.LatLng(-33.8902, 151.1759),
@@ -81,20 +91,49 @@ this.getGoogleMaps().then((google) => {
         autocomplete = new google.maps.places.Autocomplete(input);
         autocomplete.addListener('place_changed', getLocation);
 
-      var pyrmont = {lat: -33.867, lng: 151.195};
+    function getLocation() {
+        var place = autocomplete.getPlace();
+        var latitude = place.geometry.location.lat();
+        var longitude = place.geometry.location.lng();
 
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: pyrmont,
-          zoom: 15
-        });
+        reactState.setState({lat: latitude});
+        reactState.setState({lng: longitude});
 
-        infowindow = new google.maps.InfoWindow();
-        var service = new google.maps.places.PlacesService(map);
-        service.nearbySearch({
-          location: pyrmont,
-          radius: 500,
-          type: ['store']
-        }, callback);
+        if (!place.geometry) {
+            // User entered the name of a Place that was not suggested and
+            // pressed the Enter key, or the Place Details request failed.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+          }
+
+          // If the place has a geometry, then present it on a map.
+          if (place.geometry.viewport) {
+            map.fitBounds(place.geometry.viewport);
+          } else {
+            map.setCenter(place.geometry.location);
+            map.setZoom(17);  // Why 17? Because it looks good.
+          }
+
+          infowindow = new google.maps.InfoWindow();
+            var service = new google.maps.places.PlacesService(map);
+            service.nearbySearch({
+              location: {lat: reactState.state.lat , lng: reactState.state.lng},
+              radius: 500,
+              type: ['store']
+            }, callback);
+
+
+          var address = '';
+              if (place.address_components) {
+                address = [
+                  (place.address_components[0] && place.address_components[0].short_name || ''),
+                  (place.address_components[1] && place.address_components[1].short_name || ''),
+                  (place.address_components[2] && place.address_components[2].short_name || '')
+                ].join(' ');
+          }
+
+    };
+        // pyrmont = {lat: reactState.state.lat , lng: reactState.state.lng};
       });
 
       function callback(results, status) {
