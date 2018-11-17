@@ -73,21 +73,22 @@ getGoogleMaps() {
             });
           })
           .catch((error) => {
-           //console.error(error);
+           // console.error(error);
             });
     };
 
 function getAddress (latitude, longitude) {
   fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng=' +latitude + ',' + longitude + '&key=' + 'AIzaSyACySFLlLmNi76Xy9u-nD_LtiVJLUnkuN0')
-  .then(
-    function success (response) {
-      console.log('User\'s Address Data is ', response)
-    },
-    function fail (status) {
-      console.log('Request failed.  Returned status of',
-                  status)
-    }
-   )
+  .then((response) => response.json())
+  .then((responseJson) => {
+            this.setState({
+              lat: responseJson.lat,
+              lon: responseJson.lon
+            });
+  })
+  .catch((error) => {
+           // console.error(error);
+    });
 };
 
 if ("geolocation" in navigator) {
@@ -98,6 +99,7 @@ if ("geolocation" in navigator) {
          console.log('latitude', position.coords.latitude, 'longitude', position.coords.longitude);
 
          getAddress(position.coords.latitude, position.coords.longitude)
+
    },
 
         function error(error_message) {
@@ -116,6 +118,7 @@ if ("geolocation" in navigator) {
 
 
   render() {
+
     var barStyle = {
         width: '1000px',
         height: '30px'

@@ -8,11 +8,12 @@ class Main extends React.Component {
 
     this.state ={
         lat: 1.3521,
-        lng: 103.8198
+        lng: 103.8198,
+        place: ""
     }
     this.changeHandler = this.changeHandler.bind(this);
     this.clickHandler = this.clickHandler.bind(this);
-      };
+ };
 
 
     changeHandler() {
@@ -161,7 +162,6 @@ this.getGoogleMaps().then((google) => {
 };
 
   render() {
-
     var divStyle = {
         height: '500px'
     }
