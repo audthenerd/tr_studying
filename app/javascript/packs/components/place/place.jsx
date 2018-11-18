@@ -7,58 +7,86 @@ class Place extends React.Component {
     super(props)
 
     this.state = {
-      near: "",
-      lat: "",
-      lon: "",
-      section: ""
+      near: "near=Singapore",
+      section: "section=topPicks",
+      places: ""
     }
-
-    this.userInput = this.userInput.bind(this);
+    this.getPlaces = this.getPlaces.bind(this);
+    this.locInput = this.locInput.bind(this);
+    this.sectionInput = this.sectionInput.bind(this);
   };
 
+locInput(event) {
+  this.setState({near: event.target.value});
+  this.getPlaces();
+}
 
-userInput(event) {
+sectionInput(event) {
   this.setState({section: event.target.value});
-  getPlaces();
+  this.getPlaces();
 }
 
-componentDidMount() {
 
+getPlaces() {
+  var url = `https://api.foursquare.com/v2/venues/explore/?${this.state.near}&venuePhotos=1&${this.state.section}&client_id=ZXBTIXJSKMP3JERUZMCLJOC5MTTJIYTSJI2XZ3IG4F3WISSE&client_secret=GPAN3ZXU51UEWKQ3GC2OJG22BJUSMPOXS3YW4VWKLDNYZQNP&v=20181113`;
 
- function getPlaces() {
-
-   var url = `https://api.foursquare.com/v2/venues/explore/?near=Shibuya&venuePhotos=1&${this.state.section}&client_id=ZXBTIXJSKMP3JERUZMCLJOC5MTTJIYTSJI2XZ3IG4F3WISSE&client_secret=GPAN3ZXU51UEWKQ3GC2OJG22BJUSMPOXS3YW4VWKLDNYZQNP&v=20181113`;
-
-        fetch(url)
-          .then((response) => response.json())
-          .then((responseJson) => {
-            console.log(responseJson);
-          })
-          .catch((error) => {
-           // console.error(error);
-            });
+          fetch(url)
+            .then((response) => response.json())
+            .then((responseJson) => {
+              console.log(responseJson.response.groups[0].items);
+              this.setState({places: responseJson.response.groups[0].items});
+            })
+            .catch((error) => {
+             // console.error(error);
+              });
   };
-}
 
+  componentDidMount() {
+    var reactState = this;
+
+      function getPlaces() {
+    var url = `https://api.foursquare.com/v2/venues/explore/?${reactState.state.near}&venuePhotos=1&${reactState.state.section}&client_id=ZXBTIXJSKMP3JERUZMCLJOC5MTTJIYTSJI2XZ3IG4F3WISSE&client_secret=GPAN3ZXU51UEWKQ3GC2OJG22BJUSMPOXS3YW4VWKLDNYZQNP&v=20181113`;
+
+            fetch(url)
+              .then((response) => response.json())
+              .then((responseJson) => {
+                console.log(responseJson.response.groups[0].items);
+                reactState.setState({places: responseJson.response.groups[0].items});
+              })
+              .catch((error) => {
+               // console.error(error);
+                });
+  };
+
+  getPlaces();
+  }
 
   render() {
+    let squarePl;
 
-
+    if(this.state.places) {
+      squarePl = this.state.places.map((item, index) => {
+          return(
+            <li key={index} id={index}>{item.venue.name}<br /></li>
+          )
+      });
+  }
     return (
         <div className={styles.place}>
           <h1>Recommendations</h1>
-          <select id="near" value={this.state.near}>
-              <option value="ll">Your current location</option>
-              <option value="food">Food</option>
+          <select id="near" onChange={this.locInput} value={this.state.near}>
+              <option value="">Choose a location</option>
+              <option value={"ll="+this.props.current[0]+","+this.props.current[1]}>Your current location</option>
+              <option value={"ll="+this.props.foursquare[1]+","+this.props.foursquare[2]}>{this.props.foursquare[0]}</option>
           </select>
-          <select id="section" onChange={this.userInput} value={this.state.section}>
-              <option value="">Choose a category</option>
+          <select id="section" onChange={this.sectionInput} value={this.state.section}>
+              <option value="section=topPicks">Choose a category</option>
               <option value="section=food">Food</option>
               <option value="section=outdoors">Outdoors</option>
               <option value="section=drinks">Drinks</option>
           </select>
-          <p></p>
-          <p>{this.state.section}</p>
+          <p>{this.state.near}</p>
+          <ul>{squarePl}</ul>
         </div>
     );
   }

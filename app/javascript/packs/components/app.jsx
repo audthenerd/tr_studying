@@ -1,5 +1,5 @@
 import React from 'react';
-import style from './style.scss';
+import styles from './style.scss';
 import {Switch, Route} from 'react-router-dom'
 
 import Search from './search/search'
@@ -12,10 +12,12 @@ export default class App extends React.Component{
         super(props)
         this.state = {
             query: 'hello',
-            name: ""
+            name: "",
+            current: ""
         }
         this.changeHandler = this.changeHandler.bind(this);
         this.placeSearched = this.placeSearched.bind(this);
+        this.getCurrentLoc = this.getCurrentLoc.bind(this);
         this.getName = this.getName.bind(this);
     };
 
@@ -29,23 +31,29 @@ export default class App extends React.Component{
         console.log(event.target);
     }
 
-    getName() {
-        this.setState({name: place.name});
+    getCurrentLoc(position) {
+        this.setState({current: [position.coords.latitude, position.coords.longitude]});
+        console.log("current", this.state.current);
+    }
+
+    getName(place) {
+        this.setState({name: [place.name, place.geometry.location.lat(), place.geometry.location.lng()]});
+        console.log(this.state.name);
     }
 
 
   render(){
-
-
-    console.log("query", this.state.query);
+    var compStyle = {
+        display: 'flex',
+    }
     return(
         <div>
             <Switch>
                 <Route exact path="/" render={(props) => <Search {...props} input={this.changeHandler} search={this.placeSearched} val={this.state.query} />}  />
                 <Route path="/places" render={(props) =>
-                    <div>
-                        <Main {...props} name={this.getName} test={this.state.query}/>
-                        <Place />
+                    <div style={compStyle} >
+                     <Main here={this.getCurrentLoc} name={this.getName}{...props} />
+                        <Place current={this.state.current} foursquare={this.state.name}{...props} />
                     </div>
                 } />
             </Switch>
