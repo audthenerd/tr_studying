@@ -18,6 +18,8 @@
         <td><%= place.name %></td>
         <td><%= place.title %></td>
         <td><%= place.content %></td>
+        <td><%= place.date %></td>
+        <td><%= place.location %></td>
         <td><%= link_to 'Show', place %></td>
         <td><%= link_to 'Edit', edit_place_path(place) %></td>
         <td><%= link_to 'Destroy', place, method: :delete, data: { confirm: 'Are you sure?' } %></td>
@@ -29,4 +31,4 @@
 <br>
 <%= javascript_pack_tag 'hello_react' %>
 <%= javascript_include_tag 'maps' %>
-<%= link_to 'New Place', new_place_path %>
+<%= link_to 'New Itinerary', new_place_path %>

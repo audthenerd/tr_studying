@@ -4,15 +4,17 @@ import styles from './style.scss';
 
 const reactState = this;
 
+const initialState = {
+    lat: 1.3521,
+    lng: 103.8198,
+    place: ""
+}
+
 class Main extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state ={
-        lat: 1.3521,
-        lng: 103.8198,
-        place: "",
-    }
+    this.state = {...initialState};
     this.changeHandler = this.changeHandler.bind(this);
     this.clickHandler = this.clickHandler.bind(this);
  };
@@ -87,28 +89,31 @@ this.getGoogleMaps().then((google) => {
 
     infowindow = new google.maps.InfoWindow();
 
-        if ("geolocation" in navigator) {
+ if ("geolocation" in navigator) {
   // check if geolocation is supported/enabled on current browser
     navigator.geolocation.getCurrentPosition(
         function success(position) {
      // for when getting location is a success
+     getAddress(position.coords.latitude, position.coords.longitude);
          console.log('latitude', position.coords.latitude, 'longitude', position.coords.longitude);
          reactState.props.here(position);
-         getAddress(position.coords.latitude, position.coords.longitude);
-        getServices();
-   },
+      getServices();
 
+   },
         function error(error_message) {
     // for when getting location results in an error
             console.error('An error has occured while retrieving location', error_message)
             ipLookUp();
-        });
+        }
+
+    );
 } else {
   // geolocation is not supported
   // get your location some other way
   console.log('geolocation is not enabled on this browser')
   ipLookUp()
 };
+        var bounds = new google.maps.LatLngBounds();
         var defaultBounds = new google.maps.LatLngBounds(
           new google.maps.LatLng(-33.8902, 151.1759),
           new google.maps.LatLng(-33.8474, 151.2631));
@@ -123,6 +128,7 @@ this.getGoogleMaps().then((google) => {
         autocomplete.addListener('place_changed', getLocation);
 
     function getLocation() {
+
         var place = autocomplete.getPlace();
         var latitude = place.geometry.location.lat();
         var longitude = place.geometry.location.lng();
@@ -140,11 +146,11 @@ this.getGoogleMaps().then((google) => {
           // If the place has a geometry, then present it on a map.
           if (place.geometry.viewport) {
             map.fitBounds(place.geometry.viewport);
-            map.setZoom(14);
+            map.setZoom(15);
             getServices();
           } else {
             map.setCenter(place.geometry.location);
-            map.setZoom(14);  // Why 17? Because it looks good.
+            map.setZoom(15);  // Why 17? Because it looks good.
             getServices();
           }
 
@@ -160,7 +166,34 @@ this.getGoogleMaps().then((google) => {
 
     };
         // pyrmont = {lat: reactState.state.lat , lng: reactState.state.lng};
-      });
+});
+
+// componentDidUpdate(prevState) {
+//     if(this.state.lat !== prevState.lat) {
+//         if (place.geometry.viewport) {
+//             map.fitBounds(place.geometry.viewport);
+//             map.setZoom(15);
+//             getServices();
+//           } else {
+//             map.setCenter(place.geometry.location);
+//             map.setZoom(15);  // Why 17? Because it looks good.
+//             getServices();
+//           }
+//     }
+
+// };
+
+// **********************
+// G-PLACES SERVICES
+// **********************
+function getServices() {
+    var service = new google.maps.places.PlacesService(map);
+            service.nearbySearch({
+              location: {lat: reactState.state.lat , lng: reactState.state.lng},
+              radius: 1000,
+              type: ['food', 'place_of_worship', 'establishment']
+            }, callback);
+};
 
       function callback(results, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
@@ -175,11 +208,11 @@ this.getGoogleMaps().then((google) => {
         var marker = new google.maps.Marker({
           map: map,
           position: place.geometry.location,
-          animation: google.maps.Animation.DROP
+          animation: google.maps.Animation.DROP,
+          draggable: true
         });
 
-        marker.setMap(map)
-
+        marker.setMap(map);
         google.maps.event.addListener(marker, 'click', function() {
 
 
@@ -187,6 +220,8 @@ this.getGoogleMaps().then((google) => {
           // console.log(place.geometry.location.lat());
           infowindow.open(map, this);
           reactState.props.name(place);
+          marker.setAnimation(google.maps.Animation.BOUNCE)
+           setTimeout(function(){ marker.setAnimation(null); }, 1500);
         });
       }
 
@@ -200,11 +235,8 @@ function ipLookUp () {
             fetch(url)
               .then((response) => response.json())
               .then((responseJson) => {
-                console.log(responseJson);
-                this.setState({
-                  lat: responseJson.lat,
-                  lng: responseJson.lon
-                });
+        reactState.setState({lat: responseJson.lat});
+        reactState.setState({lng: responseJson.lng});
                 getServices();
               })
               .catch((error) => {
@@ -216,32 +248,32 @@ function getAddress (latitude, longitude) {
   fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng=' +latitude + ',' + longitude + '&key=' + 'AIzaSyACySFLlLmNi76Xy9u-nD_LtiVJLUnkuN0')
   .then((response) => response.json())
   .then((responseJson) => {
-            this.setState({
-              lat: responseJson.lat,
-              lng: responseJson.lon
-            });
+        console.log('rJ',responseJson.results[0].geometry.location);
+
   })
   .catch((error) => {
            // console.error(error);
     });
 };
 
+//  function mapLocation(position) {
+//     console.log("setting state using function");
+//         reactState.setState({lat: position.coords.latitude});
+//         reactState.setState({lng: position.coords.longitude});
+// };
+ function mapLocation(responseJson) {
+    console.log("setting state using function");
+        reactState.setState({lat: responseJson.results[0].geometry.location.lat});
+        reactState.setState({lng: responseJson.results[0].geometry.location.lng});
 
-// **********************
-// G-PLACES SERVICES
-// **********************
-function getServices() {
-    var service = new google.maps.places.PlacesService(map);
-            service.nearbySearch({
-              location: {lat: reactState.state.lat , lng: reactState.state.lng},
-              radius: 1000,
-              type: ['food', 'place_of_worship', 'establishment']
-            }, callback);
+        getServices();
 };
 
 };
 
   render() {
+    console.log(this.state.lat);
+    console.log(this.state.lng);
     var barStyle = {
         width: '700px',
         height: '30px'

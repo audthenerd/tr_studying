@@ -67,7 +67,10 @@ getPlaces() {
     if(this.state.places) {
       squarePl = this.state.places.map((item, index) => {
           return(
-            <li key={index} id={index}>{item.venue.name}<br /></li>
+            <div key={index} onClick={(e) => this.props.currentfs(e)} >
+              <li key={index} id={index} lat={item.venue.location.lat} lon={item.venue.location.lng}>{item.venue.name}<br />
+            {item.venue.location.address}</li>
+            </div>
           )
       });
   }
@@ -86,7 +89,7 @@ getPlaces() {
               <option value="section=drinks">Drinks</option>
           </select>
           <p>{this.state.near}</p>
-          <ul>{squarePl}</ul>
+          {squarePl}
         </div>
     );
   }

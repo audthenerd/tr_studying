@@ -123,6 +123,7 @@ if ("geolocation" in navigator) {
         width: '1000px',
         height: '30px'
     }
+
     console.log("point", this.state.point);
 
     return (

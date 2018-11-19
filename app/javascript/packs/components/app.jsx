@@ -13,12 +13,14 @@ export default class App extends React.Component{
         this.state = {
             query: 'hello',
             name: "",
-            current: ""
+            current: "",
+            currentfs: ""
         }
         this.changeHandler = this.changeHandler.bind(this);
         this.placeSearched = this.placeSearched.bind(this);
         this.getCurrentLoc = this.getCurrentLoc.bind(this);
         this.getName = this.getName.bind(this);
+        this.getPoints = this.getPoints.bind(this);
     };
 
 
@@ -41,6 +43,12 @@ export default class App extends React.Component{
         console.log(this.state.name);
     }
 
+    getPoints(event){
+        console.log("fs point", event.target.attributes.lat.nodeValue);
+        this.setState({currentfs: [event.target.attributes.lat.nodeValue, event.target.attributes.lon.nodeValue] });
+        console.log("currentfs", this.state.currentfs);
+    }
+
 
   render(){
     var compStyle = {
@@ -52,8 +60,8 @@ export default class App extends React.Component{
                 <Route exact path="/" render={(props) => <Search {...props} input={this.changeHandler} search={this.placeSearched} val={this.state.query} />}  />
                 <Route path="/places" render={(props) =>
                     <div style={compStyle} >
-                     <Main here={this.getCurrentLoc} name={this.getName}{...props} />
-                        <Place current={this.state.current} foursquare={this.state.name}{...props} />
+                     <Main here={this.getCurrentLoc} name={this.getName}{...props} clicked={this.state.currentfs} />
+                        <Place current={this.state.current} foursquare={this.state.name}{...props} currentfs={this.getPoints}/>
                     </div>
                 } />
             </Switch>
