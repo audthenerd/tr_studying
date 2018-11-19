@@ -7,8 +7,15 @@ const reactState = this;
 const initialState = {
     lat: 1.3521,
     lng: 103.8198,
-    place: ""
-}
+    place: "",
+    fslat: "",
+    fslng:""
+};
+
+var autocomplete;
+var service;
+var infowindow;
+var map;
 
 class Main extends React.Component {
   constructor(props) {
@@ -71,10 +78,7 @@ componentWillMount() {
 componentDidMount() {
     // Once the Google Maps API has finished loading, initialize the map
     var reactState = this;
-    var autocomplete;
-    var service;
-    var infowindow;
-    var map;
+
 
 // **********************
 // Setting up the map
@@ -89,30 +93,44 @@ this.getGoogleMaps().then((google) => {
 
     infowindow = new google.maps.InfoWindow();
 
- if ("geolocation" in navigator) {
-  // check if geolocation is supported/enabled on current browser
-    navigator.geolocation.getCurrentPosition(
-        function success(position) {
-     // for when getting location is a success
-     getAddress(position.coords.latitude, position.coords.longitude);
-         console.log('latitude', position.coords.latitude, 'longitude', position.coords.longitude);
-         reactState.props.here(position);
-      getServices();
+if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
 
-   },
-        function error(error_message) {
-    // for when getting location results in an error
-            console.error('An error has occured while retrieving location', error_message)
-            ipLookUp();
+            reactState.setState({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            });
+
+            getServices();
+
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+             reactState.props.here(position);
+
+            infowindow.setPosition(pos);
+            infowindow.setContent('Location found.');
+            infowindow.open(map);
+            map.setCenter(pos);
+          }, function() {
+            handleLocationError(true, infowindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infowindow, map.getCenter());
         }
 
-    );
-} else {
-  // geolocation is not supported
-  // get your location some other way
-  console.log('geolocation is not enabled on this browser')
-  ipLookUp()
-};
+      function handleLocationError(browserHasGeolocation, infowindow, pos) {
+        infowindow.setPosition(pos);
+        infowindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infowindow.open(map);
+        ipLookUp();
+      }
+
         var bounds = new google.maps.LatLngBounds();
         var defaultBounds = new google.maps.LatLngBounds(
           new google.maps.LatLng(-33.8902, 151.1759),
@@ -165,24 +183,6 @@ this.getGoogleMaps().then((google) => {
           }
 
     };
-        // pyrmont = {lat: reactState.state.lat , lng: reactState.state.lng};
-});
-
-// componentDidUpdate(prevState) {
-//     if(this.state.lat !== prevState.lat) {
-//         if (place.geometry.viewport) {
-//             map.fitBounds(place.geometry.viewport);
-//             map.setZoom(15);
-//             getServices();
-//           } else {
-//             map.setCenter(place.geometry.location);
-//             map.setZoom(15);  // Why 17? Because it looks good.
-//             getServices();
-//           }
-//     }
-
-// };
-
 // **********************
 // G-PLACES SERVICES
 // **********************
@@ -208,8 +208,7 @@ function getServices() {
         var marker = new google.maps.Marker({
           map: map,
           position: place.geometry.location,
-          animation: google.maps.Animation.DROP,
-          draggable: true
+          animation: google.maps.Animation.DROP
         });
 
         marker.setMap(map);
@@ -222,6 +221,8 @@ function getServices() {
           reactState.props.name(place);
           marker.setAnimation(google.maps.Animation.BOUNCE)
            setTimeout(function(){ marker.setAnimation(null); }, 1500);
+            map.setCenter(marker.getPosition());
+            map.panTo(map.center);
         });
       }
 
@@ -244,32 +245,16 @@ function ipLookUp () {
                 });
     };
 
-function getAddress (latitude, longitude) {
-  fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng=' +latitude + ',' + longitude + '&key=' + 'AIzaSyACySFLlLmNi76Xy9u-nD_LtiVJLUnkuN0')
-  .then((response) => response.json())
-  .then((responseJson) => {
-        console.log('rJ',responseJson.results[0].geometry.location);
+});
 
-  })
-  .catch((error) => {
-           // console.error(error);
-    });
-};
+}
 
-//  function mapLocation(position) {
-//     console.log("setting state using function");
-//         reactState.setState({lat: position.coords.latitude});
-//         reactState.setState({lng: position.coords.longitude});
-// };
- function mapLocation(responseJson) {
-    console.log("setting state using function");
-        reactState.setState({lat: responseJson.results[0].geometry.location.lat});
-        reactState.setState({lng: responseJson.results[0].geometry.location.lng});
+componentDidUpdate() {
+    if(this.state.fslat !== initialState.fslat) {
 
-        getServices();
-};
+    }
 
-};
+}
 
   render() {
     console.log(this.state.lat);

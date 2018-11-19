@@ -68,7 +68,7 @@ getPlaces() {
       squarePl = this.state.places.map((item, index) => {
           return(
             <div key={index} onClick={(e) => this.props.currentfs(e)} >
-              <li key={index} id={index} lat={item.venue.location.lat} lon={item.venue.location.lng}>{item.venue.name}<br />
+              <li key={index} id={index} className={styles.li} lat={item.venue.location.lat} lon={item.venue.location.lng}>{item.venue.name}<br />
             {item.venue.location.address}</li>
             </div>
           )
