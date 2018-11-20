@@ -5,6 +5,7 @@ import {Switch, Route} from 'react-router-dom'
 import Search from './search/search'
 import Main from './map/map'
 import Place from './place/place'
+import Detail from './detail/detail'
 
 export default class App extends React.Component{
 
@@ -14,7 +15,8 @@ export default class App extends React.Component{
             query: 'hello',
             name: "",
             current: "",
-            currentfs: ""
+            currentfs: "",
+            venue: ""
         }
         this.changeHandler = this.changeHandler.bind(this);
         this.placeSearched = this.placeSearched.bind(this);
@@ -44,9 +46,11 @@ export default class App extends React.Component{
     }
 
     getPoints(event){
-        console.log("fs point", event.target.attributes.lat.nodeValue);
+        console.log("fs point", event.target.attributes.all.nodeValue);
         this.setState({currentfs: [event.target.attributes.lat.nodeValue, event.target.attributes.lon.nodeValue] });
+        this.setState({venue: event.target.attributes.all.nodeValue});
         console.log("currentfs", this.state.currentfs);
+        console.log("current venue", this.state.venue);
     }
 
 
@@ -61,7 +65,8 @@ export default class App extends React.Component{
                 <Route path="/places" render={(props) =>
                     <div style={compStyle} >
                      <Main here={this.getCurrentLoc} name={this.getName}{...props} clicked={this.state.currentfs} />
-                        <Place current={this.state.current} foursquare={this.state.name}{...props} currentfs={this.getPoints}/>
+                    <Place current={this.state.current} foursquare={this.state.name}{...props} currentfs={this.getPoints} />
+                    <Detail clicked={this.state.venue}{...props} />
                     </div>
                 } />
             </Switch>

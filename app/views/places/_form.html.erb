@@ -22,8 +22,18 @@
   </div>
 
   <div class="field">
-    <%= form.label :content %>
+    <%= form.label :location %>
+    <%= form.text_area :string, value: @location %>
+  </div>
+
+  <div class="field">
+    <%= form.label :activity %>
     <%= form.text_area :content %>
+  </div>
+
+  <div class="field">
+    <%= form.label :date %>
+    <%= form.date_field :date %>
   </div>
 
   <div class="actions">

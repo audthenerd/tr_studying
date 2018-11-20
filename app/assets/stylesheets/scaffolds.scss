@@ -11,6 +11,7 @@ p, ol, ul, td {
   font-family: verdana, arial, helvetica, sans-serif;
   font-size: 13px;
   line-height: 18px;
+  list-style-type: none;
 }
 
 pre {
@@ -25,6 +26,10 @@ a {
   &:visited {
     color: #666;
   }
+
+   &.location-link {
+   	text-decoration: none;
+   }
 
   &:hover {
     color: #fff;
@@ -75,10 +80,13 @@ div {
 
   ul li {
     font-size: 12px;
-    list-style: square;
+    list-style-type: none;
+
   }
 }
 
 label {
   display: block;
 }
+
+

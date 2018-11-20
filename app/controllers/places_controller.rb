@@ -1,5 +1,8 @@
+require 'byebug'
+
 class PlacesController < ApplicationController
   before_action :set_place, only: [:show, :edit, :update, :destroy]
+  skip_before_action :verify_authenticity_token
 
   # GET /places
   # GET /places.json
@@ -14,7 +17,10 @@ class PlacesController < ApplicationController
 
   # GET /places/new
   def new
+    puts "PARAMS: #{params[:location]}"
     @place = Place.new
+    @location = params[:location]
+
   end
 
   # GET /places/1/edit
@@ -24,7 +30,9 @@ class PlacesController < ApplicationController
   # POST /places
   # POST /places.json
   def create
-    @place = Place.new(place_params)
+    # params = { place: {location: "foo"} }
+    # puts "PARAMS: #{params[:place]}"
+    @place = Place.new(place_params[:location])
 
     respond_to do |format|
       if @place.save
@@ -40,10 +48,12 @@ class PlacesController < ApplicationController
   # PATCH/PUT /places/1
   # PATCH/PUT /places/1.json
   def update
+
     respond_to do |format|
       if @place.update(place_params)
         format.html { redirect_to @place, notice: 'Place was successfully updated.' }
         format.json { render :show, status: :ok, location: @place }
+        byebug
       else
         format.html { render :edit }
         format.json { render json: @place.errors, status: :unprocessable_entity }
@@ -69,6 +79,6 @@ class PlacesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def place_params
-      params.require(:place).permit(:name, :title, :content)
+      params.require(:place).permit(:name, :title, :content, :date, :location)
     end
 end
