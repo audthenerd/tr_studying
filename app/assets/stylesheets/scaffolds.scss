@@ -49,6 +49,21 @@ div {
   &.field, &.actions {
     margin-bottom: 10px;
   }
+  &.place {
+  	margin: 10px;
+  }
+}
+
+li {
+	&.location-list {
+		padding: 5px;
+		border: 1px solid lightgrey;
+		border-radius: 10px;
+	}
+	&:hover {
+	background-color: mintcream;
+	cursor:pointer;
+	}
 }
 
 #notice {
@@ -80,7 +95,6 @@ div {
 
   ul li {
     font-size: 12px;
-    list-style-type: none;
 
   }
 }

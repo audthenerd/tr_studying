@@ -100,9 +100,9 @@ getPlaces() {
       squarePl = this.state.place.location.map((item, index) => {
           return(
 
-                <li key={index} onClick={(e) => this.props.currentfs(e)} id={index} lat={item.venue.location.lat} lon={item.venue.location.lng} all={item.venue} >{item.venue.name}<br />
+                <li className="location-list" key={index} onClick={(e) => this.props.currentfs(e)} id={index} lat={item.venue.location.lat} lon={item.venue.location.lng} all={item.venue} >{item.venue.name}<br />
               {item.venue.location.address}
-              <button><a className="location-link" href={"/places/new?location=" + item.venue.name}>Add to Itinerary</a></button>
+              <button><a className="location-link" href={"/trips/1/places/new?location=" + item.venue.name}>Add to Itinerary</a></button>
 
               </li>
 

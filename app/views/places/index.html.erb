@@ -2,10 +2,11 @@
 
 <h1>Places</h1>
 
+<%= link_to 'Add a Place', new_trip_place_path %>
+
 <table>
   <thead>
     <tr>
-      <th>Name</th>
       <th>Title</th>
       <th>Content</th>
       <th>Date</th>
@@ -17,20 +18,17 @@
   <tbody>
     <% @places.each do |place| %>
       <tr>
-        <td><%= place.name %></td>
         <td><%= place.title %></td>
         <td><%= place.content %></td>
         <td><%= place.date %></td>
         <td><%= place.location %></td>
-        <td><%= link_to 'Show', place %></td>
-        <td><%= link_to 'Edit', edit_place_path(place) %></td>
-        <td><%= link_to 'Destroy', place, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', trip_place_path %></td>
+        <td><%= link_to 'Edit', edit_trip_place_path(trip, place) %></td>
+        <td><%= link_to 'Destroy', trip_place, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <br>
-<%= javascript_pack_tag 'hello_react' %>
-<%= javascript_include_tag 'maps' %>
-<%= link_to 'New Itinerary', new_place_path %>
+

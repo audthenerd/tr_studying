@@ -62,7 +62,7 @@ export default class App extends React.Component{
         <div>
             <Switch>
                 <Route exact path="/" render={(props) => <Search {...props} input={this.changeHandler} search={this.placeSearched} val={this.state.query} />}  />
-                <Route path="/places" render={(props) =>
+                <Route path="/trips" render={(props) =>
                     <div style={compStyle} >
                      <Main here={this.getCurrentLoc} name={this.getName}{...props} clicked={this.state.currentfs} />
                     <Place current={this.state.current} foursquare={this.state.name}{...props} currentfs={this.getPoints} />

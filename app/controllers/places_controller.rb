@@ -1,5 +1,3 @@
-require 'byebug'
-
 class PlacesController < ApplicationController
   before_action :set_place, only: [:show, :edit, :update, :destroy]
   skip_before_action :verify_authenticity_token
@@ -79,6 +77,6 @@ class PlacesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def place_params
-      params.require(:place).permit(:name, :title, :content, :date, :location)
+      params.require(:place).permit(:title, :content, :date, :location)
     end
 end
