@@ -28,4 +28,8 @@
 
 <br>
 <%= javascript_pack_tag 'hello_react' %>
+<%= content_tag :div,
+  id: "trips_data",
+  data: @trips.to_json do %>
+<% end %>
 <%= javascript_include_tag 'maps' %>

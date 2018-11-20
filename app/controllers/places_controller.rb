@@ -1,3 +1,4 @@
+require 'byebug'
 class PlacesController < ApplicationController
   before_action :set_place, only: [:show, :edit, :update, :destroy]
   skip_before_action :verify_authenticity_token
@@ -5,7 +6,7 @@ class PlacesController < ApplicationController
   # GET /places
   # GET /places.json
   def index
-    @places = Place.all
+    @places = Place.where(trip_id: params[:trip_id])
   end
 
   # GET /places/1
@@ -18,6 +19,8 @@ class PlacesController < ApplicationController
     puts "PARAMS: #{params[:location]}"
     @place = Place.new
     @location = params[:location]
+    @trip = params[:trip_id]
+    @details = Trip.find(params[:trip_id])
 
   end
 
@@ -30,11 +33,12 @@ class PlacesController < ApplicationController
   def create
     # params = { place: {location: "foo"} }
     # puts "PARAMS: #{params[:place]}"
-    @place = Place.new(place_params[:location])
+    @trip = Trip.find(params[:trip_id])
+    @place = Place.new(place_params)
 
     respond_to do |format|
       if @place.save
-        format.html { redirect_to @place, notice: 'Place was successfully created.' }
+        format.html { redirect_to trip_place_path(@trip, @place), notice: 'Place was successfully created.' }
         format.json { render :show, status: :created, location: @place }
       else
         format.html { render :new }
@@ -51,7 +55,6 @@ class PlacesController < ApplicationController
       if @place.update(place_params)
         format.html { redirect_to @place, notice: 'Place was successfully updated.' }
         format.json { render :show, status: :ok, location: @place }
-        byebug
       else
         format.html { render :edit }
         format.json { render json: @place.errors, status: :unprocessable_entity }
@@ -77,6 +80,6 @@ class PlacesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def place_params
-      params.require(:place).permit(:title, :content, :date, :location)
+      params.require(:place).permit(:title, :content, :date, :location, :trip_id)
     end
 end

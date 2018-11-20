@@ -3,7 +3,7 @@
 <h1>Places</h1>
 
 <%= link_to 'Add a Place', new_trip_place_path %>
-
+<%= link_to 'Home', trips_path %>
 <table>
   <thead>
     <tr>
@@ -22,7 +22,7 @@
         <td><%= place.content %></td>
         <td><%= place.date %></td>
         <td><%= place.location %></td>
-        <td><%= link_to 'Show', trip_place_path %></td>
+        <td><%= link_to 'Show', trip_place_path(@trip) %></td>
         <td><%= link_to 'Edit', edit_trip_place_path(trip, place) %></td>
         <td><%= link_to 'Destroy', trip_place, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>

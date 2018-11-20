@@ -1,4 +1,5 @@
 import React from 'react';
+import TablePagination from '@material-ui/core/TablePagination';
 
 import './style.css';
 
@@ -12,12 +13,16 @@ class Place extends React.Component {
       place: {
         location:""
       },
-      input:""
+      input:"",
+      button: "Choose a Trip",
+      trip_id: "",
+      able: true
     }
     this.getPlaces = this.getPlaces.bind(this);
     this.locInput = this.locInput.bind(this);
     this.sectionInput = this.sectionInput.bind(this);
     this.sendData = this.sendData.bind(this);
+    this.chooseTrip = this.chooseTrip.bind(this);
   };
 
 locInput(event) {
@@ -72,6 +77,19 @@ getPlaces() {
               });
   };
 
+  chooseTrip(event) {
+    var reactState = this;
+    console.log("trip", event.target);
+    reactState.setState({trip_id: event.target.id});
+    reactState.setState({button: event.target.attributes.store.nodeValue});
+
+    var content = document.getElementsByClassName('dropdown-content');
+    for (let i=0; i<content.length; i++) {
+      content[i].style.display = 'none';
+    };
+
+  }
+
   componentDidMount() {
     var reactState = this;
 
@@ -95,21 +113,38 @@ getPlaces() {
 
   render() {
     let squarePl;
+    let dropDown;
+    let addItinerary;
+
+    var reactState = this;
+
+
+    if (this.props.allTrips) {
+      dropDown = this.props.allTrips.map((trip, index) => {
+          return (
+                  <div key={index} className="dropdown-content">
+                    <p key={index} id={trip.id} store={trip.title} onClick={(e)=>this.chooseTrip(e)} >{trip.title}</p>
+                  </div>)
+      })
+    };
+
 
     if(this.state.place.location) {
       squarePl = this.state.place.location.map((item, index) => {
+          if (reactState.state.trip_id !== "") {
+          addItinerary = (
+              <button key={index}><a key={index} href={"/trips/"+reactState.state.trip_id+"/places/new?location="+item.venue.name}>Add to Itinerary</a></button>
+            )
+          }
           return(
-
-                <li className="location-list" key={index} onClick={(e) => this.props.currentfs(e)} id={index} lat={item.venue.location.lat} lon={item.venue.location.lng} all={item.venue} >{item.venue.name}<br />
+                <li key={index} className="location-list" key={index} onClick={(e) => this.props.currentfs(e)} id={index} lat={item.venue.location.lat} lon={item.venue.location.lng} all={item.venue} >{item.venue.name}<br />
               {item.venue.location.address}
-              <button><a className="location-link" href={"/trips/1/places/new?location=" + item.venue.name}>Add to Itinerary</a></button>
-
+                {addItinerary}
               </li>
-
-
-
           )
       });
+
+      // console.log("trips", this.props.allTrips);
   }
     return (
         <div className="place">
@@ -126,7 +161,13 @@ getPlaces() {
               <option value="section=drinks">Drinks</option>
           </select>
           <p>{this.state.near}</p>
-          <ul className="foo">{squarePl}</ul>
+          <div className="dropdown">
+            <button className="dropbtn">{reactState.state.button}
+              <i className="fa fa-caret-down"></i>
+            </button>
+            {dropDown}
+          </div>
+          <ul>{squarePl}</ul>
         </div>
     );
   }

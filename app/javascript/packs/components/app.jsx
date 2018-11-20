@@ -55,6 +55,7 @@ export default class App extends React.Component{
 
 
   render(){
+
     var compStyle = {
         display: 'flex',
     }
@@ -65,7 +66,7 @@ export default class App extends React.Component{
                 <Route path="/trips" render={(props) =>
                     <div style={compStyle} >
                      <Main here={this.getCurrentLoc} name={this.getName}{...props} clicked={this.state.currentfs} />
-                    <Place current={this.state.current} foursquare={this.state.name}{...props} currentfs={this.getPoints} />
+                    <Place current={this.state.current} foursquare={this.state.name}{...props} currentfs={this.getPoints} allTrips={this.props.trips} />
                     <Detail clicked={this.state.venue}{...props} />
                     </div>
                 } />

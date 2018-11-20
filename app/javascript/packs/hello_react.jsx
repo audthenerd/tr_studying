@@ -22,10 +22,13 @@ Hello.propTypes = {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    const trips = document.getElementById('trips_data');
+    const data = JSON.parse(trips.getAttribute('data'));
   ReactDOM.render(
     <div>
     <BrowserRouter>
-        <App />
+        <App trips={data} />
     </BrowserRouter>
         <Hello name="React" />
     </div>,
