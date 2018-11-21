@@ -23,6 +23,7 @@ class Place extends React.Component {
     this.sectionInput = this.sectionInput.bind(this);
     this.sendData = this.sendData.bind(this);
     this.chooseTrip = this.chooseTrip.bind(this);
+    this.doneChoosing = this.doneChoosing.bind(this);
   };
 
 locInput(event) {
@@ -90,6 +91,13 @@ getPlaces() {
 
   }
 
+  doneChoosing() {
+    var content = document.getElementsByClassName('dropdown-content');
+    for (let i=0; i<content.length; i++) {
+      content[i].style.display = 'block';
+    };
+  }
+
   componentDidMount() {
     var reactState = this;
 
@@ -133,7 +141,7 @@ getPlaces() {
       squarePl = this.state.place.location.map((item, index) => {
           if (reactState.state.trip_id !== "") {
           addItinerary = (
-              <button key={index}><a key={index} href={"/trips/"+reactState.state.trip_id+"/places/new?location="+item.venue.name}>Add to Itinerary</a></button>
+              <button key={index}><a key={index} href={"/trips/"+reactState.state.trip_id+"/places?location="+item.venue.name}>Add to Itinerary</a></button>
             )
           }
           return(
@@ -148,7 +156,7 @@ getPlaces() {
   }
     return (
         <div className="place">
-          <h1>Recommendations</h1>
+          <h3>Places of Interest</h3>
           <select id="near" onChange={this.locInput} value={this.state.near}>
               <option value="">Choose a location</option>
               <option value={"ll="+this.props.current[0]+","+this.props.current[1]}>Your current location</option>
@@ -160,9 +168,9 @@ getPlaces() {
               <option value="section=outdoors">Outdoors</option>
               <option value="section=drinks">Drinks</option>
           </select>
-          <p>{this.state.near}</p>
+
           <div className="dropdown">
-            <button className="dropbtn">{reactState.state.button}
+            <button onClick={this.doneChoosing} className="dropbtn">{reactState.state.button}
               <i className="fa fa-caret-down"></i>
             </button>
             {dropDown}

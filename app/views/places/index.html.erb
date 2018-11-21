@@ -1,34 +1,46 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Places</h1>
 
-<%= link_to 'Add a Place', new_trip_place_path %>
-<%= link_to 'Home', trips_path %>
+<h1><%= @itinerary.title %>: Your Itinerary</h1>
+<p>Description: <%= @itinerary.description %></p>
+<p>Dates: <%= @itinerary.start_date %> - <%= @itinerary.end_date %></p>
+<button class="add-location" onclick="showDiv()">Add a New Location</button>
+<%#= link_to 'Add a Location', new_trip_place_path %>
+
+<div id="new-form"><%= render 'form', place: @place %></div>
+
+
+<% if (@places.length > 0 ) %>
 <table>
   <thead>
     <tr>
+    	<th class="first">No.</th>
       <th>Title</th>
       <th>Content</th>
       <th>Date</th>
       <th>Location</th>
-      <th colspan="3"></th>
     </tr>
   </thead>
 
   <tbody>
     <% @places.each do |place| %>
       <tr>
+      	<td><%= place.id %></td>
         <td><%= place.title %></td>
         <td><%= place.content %></td>
         <td><%= place.date %></td>
         <td><%= place.location %></td>
-        <td><%= link_to 'Show', trip_place_path(@trip) %></td>
-        <td><%= link_to 'Edit', edit_trip_place_path(trip, place) %></td>
-        <td><%= link_to 'Destroy', trip_place, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td class="action"><%= link_to 'Edit', edit_trip_place_path(@itinerary, place) %> <%= link_to 'Delete', trip_place_path(@itinerary, place),
+		        method: :delete,
+		        data: { confirm: 'Really Meh?' } %><td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
+<% else %>
+	<p>Click on "Add a Location" to add some places to visit on your trip!</p>
+<% end %>
 <br>
+
+<%= link_to 'Back to Maps', trips_path %>
 

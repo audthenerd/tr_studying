@@ -13,6 +13,9 @@ class TripsController < ApplicationController
 
   end
 
+  def edit
+    @trip = Trip.find(params[:id])
+  end
 
   def create
     @trip = Trip.new(trip_params)
@@ -27,11 +30,27 @@ class TripsController < ApplicationController
 
   end
 
+   def update
+
+    @trip = Trip.find(params[:id])
+    @trip.update(trip_params)
+
+    redirect_to trips_path
+  end
+
+  def destroy
+    @trip = Trip.find(params[:id])
+    @trip.destroy
+    respond_to do |format|
+      format.html { redirect_to trips_url, notice: 'Trip was successfully destroyed.' }
+      format.json { head :no_content }
+    end
+  end
 
   private
 
   def trip_params
-      params.require(:trip).permit(:title, :description, :start_date, :end_date)
-    end
+    params.require(:trip).permit(:title, :description, :start_date, :end_date)
+  end
 
 end

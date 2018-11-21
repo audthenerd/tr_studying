@@ -6,12 +6,21 @@ class PlacesController < ApplicationController
   # GET /places
   # GET /places.json
   def index
+    @itinerary = Trip.find(params[:trip_id])
     @places = Place.where(trip_id: params[:trip_id])
+    @trip = params[:trip_id]
+
+    @place = Place.new
+    @location = params[:location]
+    @details = Trip.find(params[:trip_id])
+
   end
 
   # GET /places/1
   # GET /places/1.json
   def show
+    @trip = Trip.find(params[:trip_id])
+    @place = Place.find(params[:id])
   end
 
   # GET /places/new
@@ -26,6 +35,12 @@ class PlacesController < ApplicationController
 
   # GET /places/1/edit
   def edit
+    @trip = Trip.find(params[:trip_id])
+    @place = Place.find(params[:id])
+
+    @places = Place.where(trip_id: params[:trip_id])
+    @others = @places.where.not(id: params[:id])
+
   end
 
   # POST /places
@@ -38,7 +53,7 @@ class PlacesController < ApplicationController
 
     respond_to do |format|
       if @place.save
-        format.html { redirect_to trip_place_path(@trip, @place), notice: 'Place was successfully created.' }
+        format.html { redirect_to trip_places_path(@trip), notice: 'Place was successfully created.' }
         format.json { render :show, status: :created, location: @place }
       else
         format.html { render :new }
@@ -50,10 +65,11 @@ class PlacesController < ApplicationController
   # PATCH/PUT /places/1
   # PATCH/PUT /places/1.json
   def update
-
+    @trip = Trip.find(params[:trip_id])
+    @place = Place.find(params[:id])
     respond_to do |format|
       if @place.update(place_params)
-        format.html { redirect_to @place, notice: 'Place was successfully updated.' }
+        format.html { redirect_to trip_places_path(@trip), notice: 'Place was successfully updated.' }
         format.json { render :show, status: :ok, location: @place }
       else
         format.html { render :edit }
@@ -67,7 +83,7 @@ class PlacesController < ApplicationController
   def destroy
     @place.destroy
     respond_to do |format|
-      format.html { redirect_to places_url, notice: 'Place was successfully destroyed.' }
+      format.html { redirect_to trip_places_url, notice: 'Place was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

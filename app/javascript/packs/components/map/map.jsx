@@ -272,7 +272,7 @@ componentDidUpdate() {
     return (
         <div className={styles.main}>
         <div className={styles.search}>
-        <p>Search for a location</p>
+        <h3>Search for a location</h3>
         <form onClick={this.clickHandler} className="search-results" >
             <input className={styles.name} style={barStyle} ref={sb => this.sb = sb} onClick={this.changeHandler} id="autocomplete"/>
         </form>
