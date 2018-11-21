@@ -22,9 +22,11 @@ Hello.propTypes = {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-
+    let data;
     const trips = document.getElementById('trips_data');
-    const data = JSON.parse(trips.getAttribute('data'));
+    if(trips) {
+        data = JSON.parse(trips.getAttribute('data'));
+    };
   ReactDOM.render(
     <div>
     <BrowserRouter>

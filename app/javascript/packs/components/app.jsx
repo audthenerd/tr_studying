@@ -46,7 +46,7 @@ export default class App extends React.Component{
     }
 
     getPoints(event){
-        console.log("fs point", event.target.attributes.all.nodeValue);
+        console.log("fs point", event.target.attributes.class);
         this.setState({currentfs: [event.target.attributes.lat.nodeValue, event.target.attributes.lon.nodeValue] });
         this.setState({venue: event.target.attributes.all.nodeValue});
         console.log("currentfs", this.state.currentfs);
@@ -62,7 +62,8 @@ export default class App extends React.Component{
     return(
         <div>
             <Switch>
-                <Route exact path="/" render={(props) => <Search {...props} input={this.changeHandler} search={this.placeSearched} val={this.state.query} />}  />
+                <Route exact path="/" render={(props) =>
+                    <Search {...props} input={this.changeHandler} search={this.placeSearched} val={this.state.query} />}  />
                 <Route path="/trips" render={(props) =>
                     <div style={compStyle} >
                      <Main here={this.getCurrentLoc} name={this.getName}{...props} clicked={this.state.currentfs} />
